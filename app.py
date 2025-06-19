@@ -2,10 +2,11 @@ from flask import Flask, request, jsonify
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+import os
+import json
 
 app = Flask(__name__)
 
-CREDENTIALS_PATH = "credenciales_omnion.json"
 SHEET_NAME = "Historial Omnion"
 
 def conectar_google_sheets():
@@ -13,7 +14,14 @@ def conectar_google_sheets():
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
-    creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_PATH, scope)
+    # Leer credenciales desde la variable de entorno
+    credenciales_json = os.environ.get("GOOGLE_CREDENTIALS")
+
+    if not credenciales_json:
+        raise Exception("Variable de entorno 'GOOGLE_CREDENTIALS' no está definida")
+
+    creds_dict = json.loads(credenciales_json)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     sheet = client.open(SHEET_NAME).sheet1
     return sheet
