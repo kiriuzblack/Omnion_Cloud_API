@@ -26,6 +26,10 @@ def conectar_google_sheets():
     sheet = client.open(SHEET_NAME).sheet1
     return sheet
 
+@app.route("/", methods=["GET"])
+def index():
+    return "🚀 Omnion API está activa y conectada con Google Sheets."
+
 @app.route("/api/guardar", methods=["POST"])
 def guardar():
     data = request.get_json()
