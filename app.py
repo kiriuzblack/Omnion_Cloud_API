@@ -14,11 +14,13 @@ def conectar_google_sheets():
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
-    # Leer credenciales desde la variable de entorno
-    credenciales_json = os.environ.get("GOOGLE_CREDENTIALS")
 
+    credenciales_json = os.environ.get("GOOGLE_CREDENTIALS")
     if not credenciales_json:
         raise Exception("Variable de entorno 'GOOGLE_CREDENTIALS' no está definida")
+
+    # Solución: convertir los `\\n` en `\n` reales para que funcione
+    credenciales_json = credenciales_json.replace("\\n", "\n")
 
     creds_dict = json.loads(credenciales_json)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
